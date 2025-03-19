@@ -1031,14 +1031,21 @@ function App() {
       // Ground-based turning (allow turning when stationary or moving)
       if (turning !== 0 && car.onGround) {
         // Adaptive turning based on movement state
-        let turnFactor;
+        let turnFactor = 1;
 
         if (!isMoving) {
           // Allow turning when stationary (simulates wheels turning in place)
           turnFactor = 0.5; // Reduced factor for stationary turning
         } else if (isReversing) {
-          // Reverse turning - invert controls for realistic driving
-          turnFactor = -0.8; // Negative to invert steering direction when reversing
+          // turning = -turning; // Invert steering input
+          // // Then use the same factor logic as for forward turning:
+          // if (absSpeed < 10) {
+          //   turnFactor = 1.2;
+          // } else if (absSpeed < 20) {
+          //   turnFactor = 0.9;
+          // } else {
+          //   turnFactor = 0.6;
+          // }
         } else {
           // Forward turning - adaptive based on speed
           if (absSpeed < 10) {
