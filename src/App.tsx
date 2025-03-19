@@ -30,9 +30,9 @@ const CONFIG = {
     MODEL_PATH: '/car_2.glb',
     SCALE: 1,
     // Modified: Adjusted collision size to better center with the car model
-    COLLISION_SIZE: new THREE.Vector3(2, 1, 4),
+    COLLISION_SIZE: new THREE.Vector3(2, 1, 4.5),
     // Added offset to center the hitbox with the visual model
-    COLLISION_OFFSET: new THREE.Vector3(0, 0, 0),
+    COLLISION_OFFSET: new THREE.Vector3(-0.4, 1, 0.5),
     MASS: 10,
   },
   GROUND: {
