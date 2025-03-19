@@ -6,7 +6,7 @@ import './App.css';
 // Configuration
 const CONFIG = {
   PHYSICS: {
-    GRAVITY: new THREE.Vector3(0, -1, 0),
+    GRAVITY: new THREE.Vector3(0, 0, 0),
     CAR_DOWNFORCE: 0, // Increased downforce to keep car grounded
     JUMP_VELOCITY: 0, // Reduced jump height
     CAR_ACCELERATION: 350, // Balanced acceleration
@@ -1033,30 +1033,6 @@ function App() {
         // Adaptive turning based on movement state
         let turnFactor = 1;
 
-        if (!isMoving) {
-          // Allow turning when stationary (simulates wheels turning in place)
-          turnFactor = 0.5; // Reduced factor for stationary turning
-        } else if (isReversing) {
-          // turning = -turning; // Invert steering input
-          // // Then use the same factor logic as for forward turning:
-          // if (absSpeed < 10) {
-          //   turnFactor = 1.2;
-          // } else if (absSpeed < 20) {
-          //   turnFactor = 0.9;
-          // } else {
-          //   turnFactor = 0.6;
-          // }
-        } else {
-          // Forward turning - adaptive based on speed
-          if (absSpeed < 10) {
-            turnFactor = 1.2; // More responsive at very low speeds
-          } else if (absSpeed < 20) {
-            turnFactor = 0.9; // Moderate turning at medium speeds
-          } else {
-            turnFactor = 0.6; // Less turning at high speeds for stability
-          }
-        }
-
         // Calculate turn amount
         const turnAmount =
           CONFIG.PHYSICS.CAR_TURNING_SPEED * turning * dt * turnFactor;
@@ -1071,7 +1047,7 @@ function App() {
       }
 
       // ADDED: Allow limited air control
-      if (turning !== 0 && !car.onGround) {
+      if (turning !== 0) {
         // Reduced turning capability when airborne
         const airTurnFactor = 0.3; // Significantly reduced for realistic physics
         const airTurnAmount =
