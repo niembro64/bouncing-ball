@@ -13,7 +13,7 @@ const CONFIG = {
     CAR_MAX_SPEED: 40,
     CAR_REVERSE_MAX_SPEED: 15, // Reduced reverse speed
     CAR_TURNING_SPEED: 9.0, // Adjusted for more natural turning
-    CAR_FRICTION: 0.9,
+    CAR_FRICTION: 0.96,
     CAR_BRAKING_FORCE: 0.92,
     GROUND_RESTITUTION: 5, // Drastically reduced bounce for ground
     OBJECT_RESTITUTION: 0.3, // Lower bounce for object collisions
@@ -239,8 +239,10 @@ function App() {
           setLoadingProgress(100);
           loadingRef.current = false;
 
+          const helperMesh = false;
+
           // Add a helper box to visualize the car's collision boundary in development
-          if (process.env.NODE_ENV === 'development') {
+          if (helperMesh) {
             const helperGeometry = new THREE.BoxGeometry(
               CONFIG.CAR.COLLISION_SIZE.x,
               CONFIG.CAR.COLLISION_SIZE.y,
