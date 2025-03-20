@@ -1,3 +1,5 @@
+// App.tsx
+
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -1216,21 +1218,29 @@ function App() {
         obj.velocity.z = 0;
     }
 
-    // Special case for the car - update camera to follow
-    if (carRef.current && cameraRef.current) {
-      const car = carRef.current;
+    // Special case for the car - update camera to follow with a smooth trailing effect
+    const car = carRef.current;
+    if (car && cameraRef.current && car.direction) {
+      // Define the desired offsets: trailing distance behind the car and height above ground
+      const trailingDistance = 20; // Distance behind the car
+      const trailingHeight = 15; // Height above ground
 
-      // Fixed camera that doesn't rotate with the car
-      // Simply follow the car's position along X and Z axes
-      const cameraHeight = 15;
-      const cameraDistanceZ = 20;
+      // Compute the trail point relative to the car's position and orientation:
+      // Subtract car.direction (assumed to be normalized and representing forward) multiplied by the trailing distance.
+      const trailPoint = car.mesh.position
+        .clone()
+        .sub(car.direction.clone().multiplyScalar(trailingDistance));
+      // Raise the trail point by the trailing height.
+      trailPoint.y += trailingHeight;
 
-      // Position camera at fixed height and distance behind car
-      cameraRef.current.position.x = car.mesh.position.x;
-      cameraRef.current.position.y = car.mesh.position.y + cameraHeight;
-      cameraRef.current.position.z = car.mesh.position.z + cameraDistanceZ;
+      // Smoothly update the camera position: blend 90% of its current position with 10% of the new trail point.
+      const currentCameraPos = cameraRef.current.position.clone();
+      const newCameraPos = currentCameraPos
+        .multiplyScalar(0.9)
+        .add(trailPoint.multiplyScalar(0.1));
+      cameraRef.current.position.copy(newCameraPos);
 
-      // Always look at the car
+      // Ensure the camera always looks directly at the car
       cameraRef.current.lookAt(car.mesh.position);
     }
 
