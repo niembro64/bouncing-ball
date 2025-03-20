@@ -1219,28 +1219,39 @@ function App() {
     }
 
     // Special case for the car - update camera to follow with a smooth trailing effect
-    const car = carRef.current;
-    if (car && cameraRef.current && car.direction) {
-      // Define the desired offsets: trailing distance behind the car and height above ground
-      const trailingDistance = 20; // Distance behind the car
-      const trailingHeight = 15; // Height above ground
+    // Special case for the car - update camera to follow
+    if (carRef.current && cameraRef.current) {
+      const car = carRef.current;
 
-      // Compute the trail point relative to the car's position and orientation:
-      // Subtract car.direction (assumed to be normalized and representing forward) multiplied by the trailing distance.
-      const trailPoint = car.mesh.position
-        .clone()
-        .sub(car.direction.clone().multiplyScalar(trailingDistance));
-      // Raise the trail point by the trailing height.
-      trailPoint.y += trailingHeight;
+      // Camera configuration
+      const cameraHeight = 15; // Height offset for camera
+      const cameraDistance = 15; // Distance behind the car
+      const cameraLerpFactor = 0.01; // How quickly camera moves to trail point (0.1 = 10% per frame)
 
-      // Smoothly update the camera position: blend 90% of its current position with 10% of the new trail point.
-      const currentCameraPos = cameraRef.current.position.clone();
-      const newCameraPos = currentCameraPos
-        .multiplyScalar(0.9)
-        .add(trailPoint.multiplyScalar(0.1));
-      cameraRef.current.position.copy(newCameraPos);
+      // Calculate the trail point behind the car based on car's direction
+      // We need to use the car's direction (which is a normalized vector) to determine "behind"
+      const trailPoint = new THREE.Vector3();
 
-      // Ensure the camera always looks directly at the car
+      // Get the reverse direction of the car (to position camera behind car)
+      const reverseDirX = -car.direction!.x;
+      const reverseDirZ = -car.direction!.z;
+
+      // Calculate position behind car using direction vector multiplied by desired distance
+      trailPoint.x = car.mesh.position.x + reverseDirX * cameraDistance;
+      trailPoint.y = car.mesh.position.y + cameraHeight; // Fixed height above car
+      trailPoint.z = car.mesh.position.z + reverseDirZ * cameraDistance;
+
+      // Smoothly interpolate current camera position toward the trail point
+      // Formula: newPosition = currentPosition * (1 - lerpFactor) + targetPosition * lerpFactor
+      cameraRef.current.position.x =
+        cameraRef.current.position.x * (1 - cameraLerpFactor) +
+        trailPoint.x * cameraLerpFactor;
+      cameraRef.current.position.y = trailPoint.y;
+      cameraRef.current.position.z =
+        cameraRef.current.position.z * (1 - cameraLerpFactor) +
+        trailPoint.z * cameraLerpFactor;
+
+      // Always look directly at the car
       cameraRef.current.lookAt(car.mesh.position);
     }
 
