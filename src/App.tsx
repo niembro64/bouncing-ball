@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import './App.css';
+import bmwModelUrl from './assets/bmw_1.glb';
 
+const carMult = 2;
 // Configuration
 const CONFIG = {
   PHYSICS: {
@@ -27,12 +29,17 @@ const CONFIG = {
     SETTLEMENT_DELAY: 30, // Frames to wait before forcing settlement
   },
   CAR: {
-    MODEL_PATH: '/car_2.glb',
-    SCALE: 1,
+    MODEL_PATH: bmwModelUrl,
+    // MODEL_PATH: '/bmw_1.glb',
+    SCALE: 1 * carMult,
     // Modified: Adjusted collision size to better center with the car model
-    COLLISION_SIZE: new THREE.Vector3(2, 1, 4.5),
+    COLLISION_SIZE: new THREE.Vector3(2 * carMult, 1 * carMult, 4.5 * carMult),
     // Added offset to center the hitbox with the visual model
-    COLLISION_OFFSET: new THREE.Vector3(-0.4, 1, 0.5),
+    COLLISION_OFFSET: new THREE.Vector3(
+      -0.4 * carMult,
+      1 * carMult,
+      0.5 * carMult
+    ),
     MASS: 10,
   },
   GROUND: {
